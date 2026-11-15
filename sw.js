@@ -1,6 +1,6 @@
 /* Mode hors ligne : l'appli est gardée en cache sur l'appareil.
    Change VERSION à chaque mise à jour des fichiers pour que les appareils récupèrent la nouvelle version. */
-const VERSION = "livret-p66-2026-11-14a";
+const VERSION = "livret-p66-2026-11-15a";
 const FICHIERS = ["./", "index.html", "livret-pdf.js", "pdf-lib.min.js", "manifest.webmanifest", "icon-180.png", "icon-192.png", "icon-512.png", "icon-512-maskable.png"];
 
 self.addEventListener("install", e => {

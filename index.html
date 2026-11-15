@@ -237,6 +237,10 @@ details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
       <button class="ghost" type="button" id="newLiv" hidden>Ouvrir un nouveau livret</button>
     </div>
     <div class="toast" id="toastL" aria-live="polite"></div>
+    <div id="pdfDemande" hidden style="display:grid;gap:8px;border:2px solid var(--accent);border-radius:6px;padding:12px">
+      <p class="note" id="pdfDemandeTxt" style="color:var(--ink)">L'appli a besoin du PDF de ton livret : touche le bouton et choisis-le dans Fichiers.</p>
+      <div class="actions"><label class="primary" style="cursor:pointer">Choisir mon PDF de livret<input id="pdfDemandeIn" type="file" accept="application/pdf,.pdf" hidden></label></div>
+    </div>
     <div id="newLivBloc" hidden style="display:grid;gap:10px;border-top:1px solid var(--line);padding-top:12px">
       <h3>Nouveau livret</h3>
       <p class="note">Télécharge d'abord le livret actuel et garde-le. Le nouveau livret démarre page 7, ligne 1, et la numérotation des jours continue. Tes informations d'identité y sont écrites (vérifie-les dans Réglages).</p>
@@ -349,6 +353,24 @@ const store={db:null,mem:{},ok:false,
   get(k){return new Promise(res=>{if(!this.db)return res(this.mem[k]);try{const q=this.db.transaction("kv").objectStore("kv").get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>res(undefined);}catch(e){res(undefined);}});},
   set(k,v){this.mem[k]=v;return new Promise(res=>{if(!this.db)return res(false);try{const tx=this.db.transaction("kv","readwrite");tx.objectStore("kv").put(v,k);tx.oncomplete=()=>res(true);tx.onerror=()=>res(false);tx.onabort=()=>res(false);}catch(e){res(false);}});}
 };
+/* PDF rangé en morceaux de 2 Mo (Safari sur iPad refuse parfois un seul gros bloc) ; on relit pour vérifier. */
+const MORCEAU=2*1024*1024;
+async function putPdf(cle,buf){
+  const u=new Uint8Array(buf),n=Math.ceil(u.length/MORCEAU);
+  for(let i=0;i<n;i++){if(!(await store.set(cle+"-m"+i,u.slice(i*MORCEAU,(i+1)*MORCEAU))))return false;}
+  if(!(await store.set(cle,{morceaux:n,taille:u.length})))return false;
+  const relu=await getPdf(cle);return !!relu&&relu.byteLength===u.length;
+}
+async function getPdf(cle){
+  const v=await store.get(cle);if(!v)return null;
+  if(v instanceof ArrayBuffer)return v;                    // ancien format
+  if(ArrayBuffer.isView(v))return v.buffer.slice(v.byteOffset,v.byteOffset+v.byteLength);
+  if(typeof v.morceaux!=="number")return null;
+  const out=new Uint8Array(v.taille);let pos=0;
+  for(let i=0;i<v.morceaux;i++){const m=await store.get(cle+"-m"+i);if(!m)return null;const b=m instanceof Uint8Array?m:new Uint8Array(m);out.set(b,pos);pos+=b.length;}
+  return pos===v.taille?out.buffer:null;
+}
+const mo=n=>(n/1048576).toFixed(1).replace(".",",")+" Mo";
 let etat=null;        // {profil, reglages, livrets:[{n,page,ligne,ecrireIdentite,vierge}], taches:[]}
 let editId=null, natures=new Set(), pdfTmp=null, setupCat="", setupEtat="vierge", montre=40, dernierPdf=null;
 const save=async()=>{const ok=await store.set("etat",etat);$("sync").textContent=ok?"Enregistré sur cet appareil":"Stockage indisponible : exporte une sauvegarde";$("sync").className="sync"+(ok?"":" bad");return ok;};
@@ -381,7 +403,7 @@ async function lirePdf(file,etatEl){
     const doc=await PDFLib.PDFDocument.load(buf);
     const msg=L.verifierModele(doc),n=doc.getPageCount();
     if(msg){etatEl.textContent=msg;etatEl.className="note bad";return null;}
-    etatEl.textContent="Livret reconnu : "+file.name+" ("+n+" pages, tâches de la page 7 à la page "+L.dernierePage(n)+").";etatEl.className="note okc";
+    etatEl.textContent="Livret reconnu : "+file.name+" ("+n+" pages, "+mo(buf.byteLength)+", tâches de la page 7 à la page "+L.dernierePage(n)+").";etatEl.className="note okc";
     buf.dernPage=L.dernierePage(n);
     return buf;
   }catch(e){etatEl.textContent="Impossible de lire ce PDF (fichier protégé ou abîmé). Utilise le PDF d'origine du livret.";etatEl.className="note bad";return null;}
@@ -421,7 +443,7 @@ $("fs").addEventListener("submit",async e=>{
   const inter=[[v("i1d"),v("i1f")],[v("i2d"),v("i2f")]];
   inter.forEach((p,i)=>{if((p[0]||p[1])&&!(p[0]&&p[1]))err.push("Interruption "+(i+1)+" : indique le début et la fin.");else if(p[0]&&p[1]&&p[1]<p[0])err.push("Interruption "+(i+1)+" : la fin est avant le début.");});
   if((inter[0][0]||inter[1][0])&&!v("pMotif"))err.push("Indique le motif de l'interruption.");
-  if(!pdfTmp&&!(await store.get("pdf-1")))err.push("Ajoute le PDF de ton livret.");
+  if(first&&!pdfTmp)err.push("Ajoute le PDF de ton livret.");
   const dp=pdfTmp?pdfTmp.dernPage:(etat?dern(etat.livrets[0]):L.DERNIERE_PAGE), cap1=(dp-L.PREMIERE_PAGE+1)*L.LIGNES;
   const base=Math.max(0,parseInt($("sBase").value,10)||0);
   if(setupEtat==="commence"){if(!base)err.push("Indique le dernier jour déjà inscrit dans ton livret.");if(!v("sDate"))err.push("Indique la date de la dernière tâche déjà inscrite.");}
@@ -436,11 +458,13 @@ $("fs").addEventListener("submit",async e=>{
   const l1={n:1,page,ligne,vierge:setupEtat==="vierge",ecrireIdentite:setupEtat==="vierge"?true:!$("sIdent").checked,dernPage:dp,dx:parseFloat($("sDx").value)||0,dy:parseFloat($("sDy").value)||0};
   if(first)etat={version:1,profil,reglages,livrets:[l1],taches:[]};
   else{etat.profil=profil;etat.reglages=reglages;etat.livrets[0]=l1;}
-  if(pdfTmp){await store.set("pdf-1",pdfTmp);pdfTmp=null;}
+  let pdfKo=false;
+  if(pdfTmp){const t=pdfTmp.byteLength;pdfKo=!(await putPdf("pdf-1",pdfTmp));if(pdfKo)pdfMem[1]=pdfTmp;pdfTmp=null;if(pdfKo)console.warn("PDF non enregistré",t);}
   await save();
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(_){}
   $("setup").hidden=true;$("app").hidden=false;resetForm(false);render();
-  toast("toastL",first?"Livret créé. Tu peux saisir ta première tâche.":"Réglages enregistrés.");
+  if(pdfKo)toast("toastL","Réglages enregistrés, mais l'iPad n'a pas pu garder ton PDF. Pas grave : au téléchargement, l'appli te demandera de le choisir.",true);
+  else toast("toastL",first?"Livret créé. Tu peux saisir ta première tâche.":"Réglages enregistrés.");
   window.scrollTo({top:0,behavior:"smooth"});
 });
 
@@ -594,8 +618,8 @@ $("genPdf").addEventListener("click",async()=>{
   const n=parseInt($("livSel").value,10)||courant().n,l=etat.livrets.find(x=>x.n===n);
   const btn=$("genPdf");btn.disabled=true;btn.textContent="Préparation du livret…";
   try{
-    const octets=await store.get("pdf-"+n);
-    if(!octets){toast("toastL","PDF du livret introuvable sur cet appareil : rajoute-le dans Réglages.",true);return;}
+    let octets=pdfMem[n]||await getPdf("pdf-"+n);
+    if(!octets){octets=await choisirPdf(n);if(!octets)return;}
     const out=await L.remplirLivret(PDFLib,octets.slice(0),{profil:etat.profil,ecrireIdentite:l.ecrireIdentite,nbLivrets:etat.livrets.length,lignes:lignesDe(l),dx:l.dx,dy:l.dy});
     const nom="Livret-Part66-"+etat.profil.nom.toUpperCase().replace(/[^A-Z0-9]+/g,"-")+(etat.livrets.length>1?"-n"+n:"")+"-"+today()+".pdf";
     const blob=new Blob([out],{type:"application/pdf"});
@@ -608,6 +632,25 @@ $("genPdf").addEventListener("click",async()=>{
   }catch(e){toast("toastL","Impossible de remplir ce PDF. Vérifie dans Réglages que c'est bien ton livret.",true);}
   finally{btn.disabled=false;btn.textContent="Télécharger mon livret rempli";}
 });
+/* Si le PDF n'est pas gardé sur l'iPad, on le demande au moment du téléchargement. */
+const pdfMem={};
+/* Bouton visible (sur iPad, une fenêtre de choix ne s'ouvre que sur un vrai toucher). Après le choix, on relance le téléchargement. */
+let pdfDemandeN=null;
+function choisirPdf(n){
+  pdfDemandeN=n;
+  $("pdfDemandeTxt").textContent="Le PDF de ton livret"+(etat.livrets.length>1?" n°"+n:"")+" n'est pas gardé sur cet iPad. Touche le bouton et choisis-le dans Fichiers (celui exporté de Canva) : le livret rempli sera créé tout de suite.";
+  $("pdfDemande").hidden=false;$("pdfDemande").scrollIntoView({behavior:"smooth",block:"center"});
+  return Promise.resolve(null);
+}
+$("pdfDemandeIn").addEventListener("change",async e=>{
+  const f=e.target.files[0];e.target.value="";if(!f||pdfDemandeN==null)return;
+  const p=document.createElement("p"),buf=await lirePdf(f,p);
+  if(!buf){toast("toastL",p.textContent,true);return;}
+  pdfMem[pdfDemandeN]=buf;const ok=await putPdf("pdf-"+pdfDemandeN,buf.slice(0)).catch(()=>false);
+  $("pdfDemande").hidden=true;$("livSel").value=String(pdfDemandeN);pdfDemandeN=null;
+  toast("toastL",ok?"PDF enregistré sur l'iPad.":"PDF pris en compte pour cette fois.");
+  $("genPdf").click();
+});
 $("pdfPartage").addEventListener("click",()=>{if(dernierPdf)partager(dernierPdf.blob,dernierPdf.nom);});
 
 /* ---------- nouveau livret ---------- */
@@ -615,9 +658,9 @@ let nTmp=null;
 $("newLiv").addEventListener("click",()=>{$("newLivBloc").hidden=false;nTmp=null;$("nPdf").value="";});
 $("nCancel").addEventListener("click",()=>{$("newLivBloc").hidden=true;});
 $("nPdf").addEventListener("change",async e=>{const p=document.createElement("p");nTmp=await lirePdf(e.target.files[0],p);toast("toastL",p.textContent,!nTmp);});
-async function creerLivret(octets,dernPage){const n=courant().n+1;await store.set("pdf-"+n,octets);etat.livrets.push({n,page:L.PREMIERE_PAGE,ligne:1,vierge:true,ecrireIdentite:true,dernPage:dernPage||L.DERNIERE_PAGE});await save();$("newLivBloc").hidden=true;render();toast("toastL","Livret n°"+n+" ouvert. Les prochaines tâches y seront inscrites.");}
+async function creerLivret(octets,dernPage){const n=courant().n+1;if(!(await putPdf("pdf-"+n,octets.slice(0))))pdfMem[n]=octets;etat.livrets.push({n,page:L.PREMIERE_PAGE,ligne:1,vierge:true,ecrireIdentite:true,dernPage:dernPage||L.DERNIERE_PAGE});await save();$("newLivBloc").hidden=true;render();toast("toastL","Livret n°"+n+" ouvert. Les prochaines tâches y seront inscrites.");}
 $("nOk").addEventListener("click",()=>{if(!nTmp){toast("toastL","Ajoute d'abord le PDF vierge du livret.",true);return;}creerLivret(nTmp,nTmp.dernPage);});
-$("nReuse").addEventListener("click",async()=>{const o=await store.get("pdf-1");if(o)creerLivret(o.slice(0),dern(etat.livrets[0]));else toast("toastL","PDF de départ introuvable : ajoute un PDF vierge.",true);});
+$("nReuse").addEventListener("click",async()=>{const o=await getPdf("pdf-1");if(o)creerLivret(o.slice(0),dern(etat.livrets[0]));else toast("toastL","PDF de départ introuvable : ajoute un PDF vierge.",true);});
 
 /* ---------- exports et sauvegarde ---------- */
 const csvCell=v=>{const s=String(v==null?"":v);return /[";\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
@@ -633,7 +676,7 @@ async function restaurer(e,toastId){
   const file=e.target.files[0];e.target.value="";if(!file)return;
   try{const d=JSON.parse(await file.text());if(d.type!=="livret-part66"||!Array.isArray(d.taches)||!Array.isArray(d.livrets)||!d.livrets.length||!d.profil||!d.reglages)throw 0;
     delete d.type;etat=d;await save();$("app").hidden=false;$("setup").hidden=true;resetForm(false);render();
-    if(await store.get("pdf-1"))toast("toastB","Sauvegarde restaurée : "+etat.taches.length+" tâche(s).");
+    if(await getPdf("pdf-1"))toast("toastB","Sauvegarde restaurée : "+etat.taches.length+" tâche(s).");
     else{showSetup(false);$("sCancel").hidden=true;$("pdfLabel").firstChild.textContent="Ajoute le PDF de ton livret ";$("pdfEtat").textContent="Sauvegarde restaurée ("+etat.taches.length+" tâche(s)). Complète ton identité si besoin, ajoute le PDF de ton livret, puis enregistre.";$("pdfEtat").className="note okc";}
   }catch(_){toast(toastId,"Ce fichier n'est pas une sauvegarde de l'appli.",true);}
 }
@@ -646,7 +689,7 @@ $("bkIn0").addEventListener("change",e=>restaurer(e,"toastR"));
   etat=(await store.get("etat"))||null;
   $("sync").textContent=store.ok?"Enregistré sur cet appareil":"Stockage indisponible ici";
   if(!store.ok)$("sync").className="sync bad";
-  if(etat){$("app").hidden=false;$("date").value=today();resetForm(false);render();if(!(await store.get("pdf-1"))){showSetup(false);$("sCancel").hidden=true;$("pdfEtat").textContent="Le PDF de ton livret n'est pas enregistré sur cet appareil : ajoute-le.";$("pdfEtat").className="note bad";}}
+  if(etat){$("app").hidden=false;$("date").value=today();resetForm(false);render();}
   else showSetup(true);
   if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{navigator.serviceWorker.register("sw.js").catch(()=>{});}catch(_){}}
 })();
