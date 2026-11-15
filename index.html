@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Livret Part-66</title>
+<meta name="theme-color" content="#12171c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Livret P66">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+:root{
+  --bg:#eef0ec; --panel:#fbfcf9; --ink:#17202a; --muted:#5d6872; --line:#cfd5cf;
+  --accent:#b35c00; --accent-ink:#ffffff; --field:#ffffff;
+  --ok:#2f7d4f; --warn:#a8650a; --bad:#b23a32; --bad-bg:#fbe9e7; --chip:#e3e7e1;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"IBM Plex Sans Condensed",-apple-system,"Segoe UI",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#12171c; --panel:#1a2128; --ink:#e7ebe6; --muted:#9aa5ad; --line:#2f3942;
+  --accent:#f0a040; --accent-ink:#1a1206; --field:#11161b;
+  --ok:#5cc08a; --warn:#e7a94a; --bad:#ef7a70; --bad-bg:#3a1c1a; --chip:#26303a; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.4;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:1100px;margin:0 auto;display:grid;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+h1{font-family:var(--display);font-weight:700;font-size:1.6rem;margin:0;letter-spacing:.01em}
+h1 small{font-weight:500;color:var(--muted);font-size:.95rem;margin-left:8px}
+.sync{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+h2{font-family:var(--display);font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 10px;font-weight:600}
+h3{font-family:var(--display);font-size:1rem;margin:6px 0 0;font-weight:700}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.stat .v{font-family:var(--mono);font-size:1.5rem;font-weight:600;font-variant-numeric:tabular-nums}
+.stat .l{font-size:.82rem;color:var(--muted)}
+.bar{height:8px;background:var(--chip);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.state{display:inline-block;font-family:var(--mono);font-size:.75rem;padding:2px 8px;border-radius:999px;border:1px solid currentColor;margin-top:6px}
+.s-ok{color:var(--ok)}.s-warn{color:var(--warn)}.s-bad{color:var(--bad)}
+.cols{display:grid;gap:16px;grid-template-columns:1fr}
+@media (min-width:860px){.cols{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}}
+form{display:grid;gap:12px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:12px 0 0;display:grid;gap:12px;min-width:0}
+legend{font-family:var(--display);font-weight:700;padding:0 8px 0 0;font-size:1rem}
+.row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+label{display:grid;gap:4px;font-size:.82rem;color:var(--muted);font-weight:500}
+label.check{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;color:var(--ink)}
+label.check input{width:22px;height:22px;flex:none;margin:0;padding:0}
+input,textarea,select{font:inherit;font-size:17px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:5px;padding:11px 12px;width:100%;min-width:0}
+input[type=file]{font-size:15px;padding:9px}
+input.mono,textarea.mono{font-family:var(--mono);font-size:15px;text-transform:uppercase}
+textarea{resize:vertical;min-height:64px}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.hint{font-size:.78rem;color:var(--muted);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-weight:600;font-size:15px;min-width:64px;padding:12px 14px;border-radius:5px;border:1px solid var(--line);background:var(--field);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.alerte{border:2px solid var(--bad);background:var(--bad-bg);border-radius:6px;padding:12px 14px;display:grid;gap:6px}
+.alerte strong{color:var(--bad);font-family:var(--display);font-size:1rem}
+.alerte ul{margin:0;padding-left:18px;font-size:.92rem}
+.alerte.verif{border-color:var(--warn);background:transparent}
+.alerte.verif strong{color:var(--warn)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:inherit;cursor:pointer}
+.primary{background:var(--accent);color:var(--accent-ink);border:0;border-radius:5px;padding:13px 20px;font-weight:700;font-size:1rem;text-decoration:none;display:inline-block}
+.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:12px 16px;text-decoration:none;display:inline-block}
+.primary:disabled{opacity:.45;cursor:not-allowed}
+.small{padding:4px 10px;font-size:.8rem;text-transform:none;letter-spacing:0;float:right}
+.toast{font-size:.9rem;color:var(--ok);min-height:1.2em}
+.queue{display:grid;gap:10px}
+.card{border:1px solid var(--line);border-radius:5px;padding:10px 12px;display:grid;gap:4px;background:var(--field)}
+.card .top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.card .t{font-weight:600}
+.card .ref{font-family:var(--mono);font-size:.8rem;color:var(--muted);word-break:break-word}
+.card .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.card .btns button{font-size:.85rem;padding:6px 10px;border-radius:4px;border:1px solid var(--line);background:transparent;color:var(--ink)}
+.card .btns button.del{color:var(--bad)}
+.tag{font-family:var(--mono);font-size:.72rem;padding:1px 6px;border-radius:3px;background:var(--chip);color:var(--ink)}
+.empty{color:var(--muted);font-size:.92rem}
+.note{font-size:.85rem;color:var(--muted);margin:0}
+.bad{color:var(--bad)}.okc{color:var(--ok)}
+.ata{display:flex;flex-wrap:wrap;gap:6px}
+.ata span{font-family:var(--mono);font-size:.78rem;padding:3px 7px;border-radius:4px;border:1px solid var(--line)}
+.ata span.few{border-color:var(--warn);color:var(--warn)}
+.livret{display:grid;gap:10px}
+details summary{cursor:pointer;color:var(--muted);font-size:.9rem}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .4s ease}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Livret Part-66 <small id="sous">saisie de fin de vacation</small></h1>
+    <div class="sync" id="sync">Chargement…</div>
+  </header>
+
+  <!-- ================= INSCRIPTION / RÉGLAGES ================= -->
+  <section class="panel" id="setup" hidden aria-labelledby="h-setup">
+    <h2 id="h-setup">Inscription</h2>
+    <p class="note" id="setupIntro">Ces informations sont écrites automatiquement dans ton livret (pages 1 et 2). Tout reste sur cet appareil : rien n'est envoyé sur Internet.</p>
+    <div id="restoBloc" hidden style="margin-top:12px;border:1px solid var(--line);border-radius:5px;padding:12px;display:grid;gap:8px">
+      <h3 style="margin:0">Tu as déjà une sauvegarde ?</h3>
+      <p class="note">Restaure-la ici : tes réglages et tes tâches reviennent, il ne reste qu'à rajouter le PDF de ton livret.</p>
+      <div class="actions"><label class="ghost" style="cursor:pointer;color:var(--ink);font-size:1rem">Restaurer une sauvegarde<input id="bkIn0" type="file" accept="application/json,.json" hidden></label></div>
+      <div class="toast" id="toastR" aria-live="polite"></div>
+    </div>
+    <form id="fs" novalidate style="margin-top:12px">
+      <fieldset>
+        <legend>1 · Identité</legend>
+        <div class="row">
+          <label>Nom<input id="pNom" autocomplete="family-name" autocapitalize="characters"></label>
+          <label>Prénom<input id="pPrenom" autocomplete="given-name"></label>
+        </div>
+        <div class="row">
+          <label>Date de naissance<input id="pNaiss" type="date"></label>
+          <label>Nationalité<input id="pNat" placeholder="Française"></label>
+        </div>
+        <div class="row">
+          <label>Compagnie<input id="pCie" value="AIR FRANCE"></label>
+          <label>Matricule (Compagny ID)<input id="pMat" class="mono" autocomplete="off" autocapitalize="characters"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>2 · Licence et dates d'expérience</legend>
+        <div>
+          <p class="hint" style="margin-bottom:6px">Catégorie de licence</p>
+          <div class="chips" id="catChips">
+            <button type="button" class="chip" data-c="B1" aria-pressed="false">B1</button>
+            <button type="button" class="chip" data-c="B2" aria-pressed="false">B2</button>
+          </div>
+        </div>
+        <div class="row">
+          <label>Début de l'expérience (Start date)<input id="pDebut" type="date"></label>
+        </div>
+        <p class="hint">Périodes d'interruption, si tu es concerné (formation longue, arrêt…). Laisse vide sinon.</p>
+        <div class="row">
+          <label>Interruption 1 · début<input id="i1d" type="date"></label>
+          <label>Interruption 1 · fin<input id="i1f" type="date"></label>
+          <label>Interruption 2 · début<input id="i2d" type="date"></label>
+          <label>Interruption 2 · fin<input id="i2f" type="date"></label>
+        </div>
+        <label>Motif de l'interruption<textarea id="pMotif" placeholder="Ex. : qualification de type"></textarea></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>3 · Ton livret PDF</legend>
+        <label id="pdfLabel">Ton livret en PDF (ANNEXE 1 version 03 d'origine, ou ton livret fusionné exporté de Canva)
+          <input id="pPdf" type="file" accept="application/pdf,.pdf">
+        </label>
+        <p class="note" id="pdfEtat"></p>
+        <div class="chips" id="etatChips">
+          <button type="button" class="chip" data-e="vierge" aria-pressed="true">Livret vierge</button>
+          <button type="button" class="chip" data-e="commence" aria-pressed="false">Livret déjà commencé</button>
+        </div>
+        <div id="dejaBloc" hidden style="display:grid;gap:12px">
+          <div class="row">
+            <label>Dernier jour (DAY) déjà inscrit<input id="sBase" type="number" min="0" inputmode="numeric" value="0"></label>
+            <label>Date de cette dernière tâche<input id="sDate" type="date"></label>
+          </div>
+          <div class="row">
+            <label>Prochaine case libre · page du livret
+              <select id="sPage"></select>
+            </label>
+            <label>Prochaine case libre · ligne sur la page
+              <select id="sLigne"></select>
+            </label>
+          </div>
+          <p class="hint" id="pageHint">Le numéro de page est celui imprimé en bas du livret (les tâches commencent page 7). La ligne 1 est la première du tableau.</p>
+          <label class="check"><input type="checkbox" id="sIdent" checked><span>Les pages 1 et 2 (identité) sont déjà remplies dans mon PDF : ne pas les réécrire.</span></label>
+        </div>
+        <details>
+          <summary>Calage fin (seulement si le texte ne tombe pas pile dans les cases)</summary>
+          <div class="row" style="margin-top:10px">
+            <label>Décalage vers la droite (points)<input id="sDx" type="number" step="0.5" inputmode="decimal" value="0"></label>
+            <label>Décalage vers le bas (points)<input id="sDy" type="number" step="0.5" inputmode="decimal" value="0"></label>
+          </div>
+          <p class="hint" style="margin-top:6px">1 mm ≈ 2,8 points. Valeur négative = vers la gauche ou vers le haut. S'applique aux lignes de tâches du livret n°1.</p>
+        </details>
+      </fieldset>
+
+      <fieldset>
+        <legend>4 · Objectif</legend>
+        <div class="row">
+          <label>Objectif de jours
+            <select id="sObj">
+              <option value="420">420 jours (3 ans × 140)</option>
+              <option value="480">480 jours (3 ans × 160)</option>
+              <option value="280">280 jours (2 ans × 140)</option>
+              <option value="320">320 jours (2 ans × 160)</option>
+              <option value="140">140 jours (1 an × 140)</option>
+              <option value="160">160 jours (1 an × 160)</option>
+            </select>
+          </label>
+          <label>Échéance à surveiller (facultatif)<input id="sLim" type="date"></label>
+        </div>
+        <p class="hint">La durée d'expérience dépend de ton parcours (formation, apprentissage) : vérifie-la avec ton service qualité. L'échéance peut être, par exemple, la limite pour inscrire une qualification de type.</p>
+      </fieldset>
+
+      <div class="alerte" id="setupErr" hidden><strong>Inscription incomplète</strong><ul id="setupErrL"></ul></div>
+      <div class="actions"><button class="primary" type="submit" id="sSave">Créer mon livret</button><button class="ghost" type="button" id="sCancel" hidden>Fermer</button></div>
+      <div class="toast" id="toastS" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <div id="app" hidden style="display:grid;gap:16px">
+  <!-- ================= PROGRESSION ================= -->
+  <section class="panel" aria-labelledby="h-prog">
+    <h2 id="h-prog">Progression <button class="ghost small" type="button" id="openSetup">Réglages</button></h2>
+    <div class="stats">
+      <div class="stat"><div class="v" id="s-days">0</div><div class="l">jours de tâches</div></div>
+      <div class="stat"><div class="v" id="s-rest">—</div><div class="l" id="s-rest-l">jours restants</div><div class="bar"><i id="b-obj" style="width:0%"></i></div><div class="state" id="e-obj">—</div></div>
+      <div class="stat"><div class="v" id="s-pace">—</div><div class="l">jours par mois (3 derniers mois)</div></div>
+      <div class="stat"><div class="v" id="s-lim">—</div><div class="l" id="s-lim-l">avant l'échéance</div></div>
+      <div class="stat"><div class="v" id="s-lib">—</div><div class="l" id="s-lib-l">lignes libres dans le livret</div></div>
+    </div>
+  </section>
+
+  <!-- ================= LIVRET PDF ================= -->
+  <section class="panel livret" aria-labelledby="h-liv">
+    <h2 id="h-liv">Mon livret PDF</h2>
+    <p class="note" id="livInfo"></p>
+    <div class="actions">
+      <select id="livSel" hidden style="width:auto" aria-label="Livret à télécharger"></select>
+      <button class="primary" type="button" id="genPdf">Télécharger mon livret rempli</button>
+      <a class="ghost" id="pdfLien" hidden>Ouvrir le PDF</a>
+      <button class="ghost" type="button" id="pdfPartage" hidden>Partager / Enregistrer dans Fichiers</button>
+      <button class="ghost" type="button" id="newLiv" hidden>Ouvrir un nouveau livret</button>
+    </div>
+    <div class="toast" id="toastL" aria-live="polite"></div>
+    <div id="newLivBloc" hidden style="display:grid;gap:10px;border-top:1px solid var(--line);padding-top:12px">
+      <h3>Nouveau livret</h3>
+      <p class="note">Télécharge d'abord le livret actuel et garde-le. Le nouveau livret démarre page 7, ligne 1, et la numérotation des jours continue. Tes informations d'identité y sont écrites (vérifie-les dans Réglages).</p>
+      <label>PDF vierge du livret (ANNEXE 1 version 03)<input id="nPdf" type="file" accept="application/pdf,.pdf"></label>
+      <div class="actions"><button class="primary" type="button" id="nOk">Créer le livret suivant</button><button class="ghost" type="button" id="nReuse" hidden>Réutiliser mon PDF vierge de départ</button><button class="ghost" type="button" id="nCancel">Annuler</button></div>
+    </div>
+  </section>
+
+  <div class="cols">
+    <!-- ================= SAISIE ================= -->
+    <section class="panel" aria-labelledby="h-form">
+      <h2 id="h-form">Nouvelle tâche</h2>
+      <form id="f" novalidate>
+        <div class="row">
+          <label>Date<input id="date" type="date" required></label>
+          <label>Jour (DAY)<input id="jour" type="number" min="1" inputmode="numeric" required></label>
+          <label>Immatriculation<input id="immat" class="mono" placeholder="F-XXXX" autocomplete="off" autocapitalize="characters" required></label>
+          <label>Type avion<input id="type" class="mono" placeholder="A320" autocomplete="off" autocapitalize="characters" required></label>
+        </div>
+        <div class="row">
+          <label>N° TRFX<input id="trfx" class="mono" placeholder="TRFX900XXXXX" autocomplete="off" autocapitalize="characters" required></label>
+          <label>ATA<input id="ata" class="mono" inputmode="numeric" maxlength="2" placeholder="34" required></label>
+        </div>
+        <label>Référence documentation (Task Ref)<input id="ref" class="mono" placeholder="AMM 34-11-00-710-801-A" autocomplete="off" autocapitalize="characters" required></label>
+        <label>Titre de la tâche<textarea id="titre" placeholder="Operational test of the …" required></textarea></label>
+        <div>
+          <p class="hint" style="margin-bottom:6px">Nature de la tâche</p>
+          <div class="chips" id="natChips">
+            <button type="button" class="chip" data-n="INS" aria-pressed="false">INS</button>
+            <button type="button" class="chip" data-n="FOT" aria-pressed="false">FOT</button>
+            <button type="button" class="chip" data-n="SGH" aria-pressed="false">SGH</button>
+            <button type="button" class="chip" data-n="R/I" aria-pressed="false">R/I</button>
+            <button type="button" class="chip" data-n="TS" aria-pressed="false">TS</button>
+          </div>
+        </div>
+        <div class="alerte" id="alerte" role="alert" hidden>
+          <strong>Tâche bloquée : non conforme au règlement OSAC (P-50-00)</strong>
+          <ul id="alerteL"></ul>
+        </div>
+        <div class="alerte verif" id="verif" hidden>
+          <strong>À vérifier avant d'enregistrer</strong>
+          <ul id="verifL"></ul>
+          <label class="check"><input type="checkbox" id="confirme"><span>J'ai vérifié : c'est correct, la tâche est conforme.</span></label>
+        </div>
+        <div class="actions">
+          <button class="primary" id="save" type="submit">Enregistrer la tâche</button>
+          <button class="ghost" id="cancelEdit" type="button" hidden>Annuler la modification</button>
+          <button class="ghost" id="sameAc" type="button">Même avion, tâche suivante</button>
+        </div>
+        <div class="toast" id="toast" aria-live="polite"></div>
+      </form>
+      <details style="margin-top:14px">
+        <summary>Les règles OSAC contrôlées à chaque saisie</summary>
+        <ul class="note" style="margin:8px 0 0;padding-left:18px">
+          <li><b>Bloquant</b> — mentions obligatoires : type avion, ATA, nature, date, immatriculation, TRFX, référence et titre.</li>
+          <li><b>Bloquant</b> — ordre chronologique sans rupture : même numéro de jour pour la même date, +1 pour une nouvelle date, jamais de retour en arrière ni de date future.</li>
+          <li><b>Bloquant</b> — pas de mention vague ou générique (« visite journalière », « check »…) : le titre doit nommer l'équipement ou le système.</li>
+          <li><b>Bloquant</b> — pas de doublon (même référence, même avion, même date) ; TRFX au format « TRFX » + 8 caractères.</li>
+          <li><b>À confirmer</b> — ATA différent du chapitre de la référence (normal en servicing, chapitre 12), type inhabituel pour l'immatriculation, deux natures cochées.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- ================= LISTE ================= -->
+    <section class="panel" aria-labelledby="h-q">
+      <h2 id="h-q">Mes tâches <span class="tag" id="qcount">0</span></h2>
+      <div class="queue" id="queue"></div>
+      <div class="actions" style="margin-top:12px">
+        <button class="ghost" type="button" id="plus" hidden>Afficher les tâches plus anciennes</button>
+      </div>
+      <div style="margin-top:14px">
+        <h2>Couverture ATA</h2>
+        <div class="ata" id="ata-cov"><span>—</span></div>
+        <p class="note" style="margin-top:6px">En orange : chapitres présents une seule fois. Varier les systèmes renforce le dossier.</p>
+      </div>
+      <div style="margin-top:14px">
+        <h2>Sauvegarde</h2>
+        <div class="actions">
+          <button class="ghost" type="button" id="bkOut">Exporter ma sauvegarde</button>
+          <label class="ghost" style="cursor:pointer;color:var(--ink);font-size:1rem">Restaurer une sauvegarde<input id="bkIn" type="file" accept="application/json,.json" hidden></label>
+          <button class="ghost" type="button" id="csv">Exporter en tableau (CSV)</button>
+        </div>
+        <p class="note" style="margin-top:6px">Tes tâches ne sont enregistrées que sur cet appareil. Exporte une sauvegarde régulièrement et garde-la dans Fichiers : elle permet de tout retrouver si tu changes d'appareil.</p>
+        <div class="toast" id="toastB" aria-live="polite"></div>
+      </div>
+    </section>
+  </div>
+  </div>
+  <p class="note" style="text-align:center">Appli personnelle, sans compte ni serveur. Ne saisis que des informations que ton employeur t'autorise à conserver. Le livret reste à faire valider par ton service qualité.</p>
+</div>
+
+<script src="pdf-lib.min.js"></script>
+<script src="livret-pdf.js"></script>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const L=window.LivretPDF;
+const FAM=[[["F-HTY","F-HUV"],"A350-900"],[["F-HPN","F-HZU","F-HOZ"],"A220-300"],[["F-GZN","F-GSQ"],"B777-300"],[["F-GSP"],"B777-200"],[["F-GZC"],"A330-200"],[["F-GUG"],"A318"],[["F-GRH","F-GRX","F-GPM"],"A319"],[["F-GKX","F-HBN","F-HEP"],"A320"],[["F-GMZ","F-GTA"],"A321"]];
+const typeFor=im=>{const p=(im||"").slice(0,5);for(const [ps,t] of FAM) if(ps.includes(p)) return t;return null;};
+const ataFromRef=r=>{const m=(r||"").toUpperCase().match(/(?:A350-A-|A350-|BD500-A-J|AMM[- ]?(?:TASK )?(?:AMM-)?|TSM |FIM |SRM |IPC (?:JAMCO )?|ESPM )(\d\d)/);return m?m[1]:null;};
+const fr=iso=>{if(!iso)return"";const [y,m,d]=iso.split("-");return d+"/"+m+"/"+y;};
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
+const VAGUE=/\b(visite journali|daily check|dy check|weekly check|transit check|pre-?flight check|check [a-c]\b|divers|various|misc)/i;
+const SEUL=/^\s*(check|inspection|test|visite|contr[oô]le|d[ée]pose|pose|remplacement|replacement|removal|installation)\s*\.?\s*$/i;
+
+/* ---------- stockage sur l'appareil (IndexedDB) ---------- */
+const store={db:null,mem:{},ok:false,
+  open(){return new Promise(res=>{try{const r=indexedDB.open("livret-part66",1);r.onupgradeneeded=()=>r.result.createObjectStore("kv");r.onsuccess=()=>{this.db=r.result;this.ok=true;res();};r.onerror=()=>res();r.onblocked=()=>res();}catch(e){res();}});},
+  get(k){return new Promise(res=>{if(!this.db)return res(this.mem[k]);try{const q=this.db.transaction("kv").objectStore("kv").get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>res(undefined);}catch(e){res(undefined);}});},
+  set(k,v){this.mem[k]=v;return new Promise(res=>{if(!this.db)return res(false);try{const tx=this.db.transaction("kv","readwrite");tx.objectStore("kv").put(v,k);tx.oncomplete=()=>res(true);tx.onerror=()=>res(false);tx.onabort=()=>res(false);}catch(e){res(false);}});}
+};
+let etat=null;        // {profil, reglages, livrets:[{n,page,ligne,ecrireIdentite,vierge}], taches:[]}
+let editId=null, natures=new Set(), pdfTmp=null, setupCat="", setupEtat="vierge", montre=40, dernierPdf=null;
+const save=async()=>{const ok=await store.set("etat",etat);$("sync").textContent=ok?"Enregistré sur cet appareil":"Stockage indisponible : exporte une sauvegarde";$("sync").className="sync"+(ok?"":" bad");return ok;};
+function toast(id,m,bad){const el=$(id);el.textContent=m;el.style.color=bad?"var(--bad)":"var(--ok)";clearTimeout(el._t);el._t=setTimeout(()=>el.textContent="",7000);}
+
+/* ---------- livrets et emplacements ---------- */
+const sorter=(a,b)=>a.date<b.date?-1:a.date>b.date?1:a.jour-b.jour||(a.creeLe||"").localeCompare(b.creeLe||"");
+const courant=()=>etat.livrets[etat.livrets.length-1];
+const debutIdx=l=>(l.page-L.PREMIERE_PAGE)*L.LIGNES+(l.ligne-1);
+const dern=l=>l.dernPage||L.DERNIERE_PAGE;                      // dernière page de tâches du livret
+const cap=l=>(dern(l)-L.PREMIERE_PAGE+1)*L.LIGNES;               // nombre de lignes du livret
+const tachesDe=n=>etat.taches.filter(t=>t.livret===n&&!t.deja).sort(sorter); // deja = tâche d'historique, déjà écrite dans le PDF
+const libres=l=>cap(l)-debutIdx(l)-tachesDe(l.n).length;
+function lignesDe(l){const d=debutIdx(l);return tachesDe(l.n).map((t,i)=>({...t,page:L.PREMIERE_PAGE+Math.floor((d+i)/L.LIGNES),ligne:(d+i)%L.LIGNES+1}));}
+function lastKnown(){let j=etat.reglages.base||0,d=etat.reglages.derniereDate||"";for(const t of etat.taches){if(t.jour>j||(t.jour===j&&t.date>d)){j=t.jour;d=t.date;}}return{j,d};}
+
+/* ---------- inscription / réglages ---------- */
+function fillPages(max){const cur=$("sPage").value;$("sPage").innerHTML="";for(let p=L.PREMIERE_PAGE;p<=max;p++)$("sPage").add(new Option("Page "+p,p));if(cur&&+cur<=max)$("sPage").value=cur;$("pageHint").textContent="Le numéro de page est celui imprimé en bas du livret (les tâches vont de la page 7 à la page "+max+"). La ligne 1 est la première du tableau.";}
+fillPages(L.DERNIERE_PAGE);
+for(let l=1;l<=L.LIGNES;l++)$("sLigne").add(new Option("Ligne "+l,l));
+function setCat(c){setupCat=c;document.querySelectorAll("#catChips .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===c?"true":"false"));}
+function setEtat(e){setupEtat=e;document.querySelectorAll("#etatChips .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.e===e?"true":"false"));$("dejaBloc").hidden=e!=="commence";}
+document.querySelectorAll("#catChips .chip").forEach(b=>b.addEventListener("click",()=>setCat(b.dataset.c)));
+document.querySelectorAll("#etatChips .chip").forEach(b=>b.addEventListener("click",()=>setEtat(b.dataset.e)));
+
+async function lirePdf(file,etatEl){
+  if(!file)return null;
+  try{
+    const buf=await file.arrayBuffer();
+    const doc=await PDFLib.PDFDocument.load(buf);
+    const msg=L.verifierModele(doc),n=doc.getPageCount();
+    if(msg){etatEl.textContent=msg;etatEl.className="note bad";return null;}
+    etatEl.textContent="Livret reconnu : "+file.name+" ("+n+" pages, tâches de la page 7 à la page "+L.dernierePage(n)+").";etatEl.className="note okc";
+    buf.dernPage=L.dernierePage(n);
+    return buf;
+  }catch(e){etatEl.textContent="Impossible de lire ce PDF (fichier protégé ou abîmé). Utilise le PDF d'origine du livret.";etatEl.className="note bad";return null;}
+}
+$("pPdf").addEventListener("change",async e=>{pdfTmp=await lirePdf(e.target.files[0],$("pdfEtat"));if(pdfTmp)fillPages(pdfTmp.dernPage);});
+
+function showSetup(first){
+  $("setup").hidden=false;$("sCancel").hidden=!!first;$("setupErr").hidden=true;pdfTmp=null;$("pPdf").value="";$("restoBloc").hidden=!!etat;
+  $("h-setup").textContent=first?"Inscription":"Réglages";$("sSave").textContent=first?"Créer mon livret":"Enregistrer les réglages";
+  if(etat){
+    const p=etat.profil,r=etat.reglages,l1=etat.livrets[0];
+    $("pNom").value=p.nom||"";$("pPrenom").value=p.prenom||"";$("pNaiss").value=p.naissance||"";$("pNat").value=p.nationalite||"";$("pCie").value=p.compagnie||"";$("pMat").value=p.matricule||"";
+    setCat(p.categorie||"");$("pDebut").value=p.debut||"";
+    const it=p.interruptions||[];$("i1d").value=it[0]?it[0].debut:"";$("i1f").value=it[0]?it[0].fin:"";$("i2d").value=it[1]?it[1].debut:"";$("i2f").value=it[1]?it[1].fin:"";$("pMotif").value=p.motif||"";
+    fillPages(dern(l1));
+    setEtat(l1.vierge?"vierge":"commence");$("sBase").value=r.base||0;$("sDate").value=r.derniereDate||"";$("sPage").value=l1.page;$("sLigne").value=l1.ligne;$("sIdent").checked=!l1.ecrireIdentite;$("sDx").value=l1.dx||0;$("sDy").value=l1.dy||0;
+    $("sObj").value=String(r.objectif||420);$("sLim").value=r.limite||"";
+    $("pdfLabel").firstChild.textContent="Remplacer le PDF du livret n°1 (facultatif) ";
+    $("pdfEtat").textContent=etat.livrets.length>1?"Les réglages « livret déjà commencé » concernent ton livret n°1.":"Ton PDF est déjà enregistré dans l'appli.";$("pdfEtat").className="note";
+  }else{setCat("");setEtat("vierge");$("pdfEtat").textContent="";fillPages(L.DERNIERE_PAGE);}
+  $("setup").scrollIntoView({behavior:"smooth"});
+}
+$("openSetup").addEventListener("click",()=>showSetup(false));
+$("sCancel").addEventListener("click",()=>{$("setup").hidden=true;});
+$("fs").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const err=[],first=!etat;
+  const v=id=>$(id).value.trim();
+  if(!v("pNom"))err.push("Nom manquant.");
+  if(!v("pPrenom"))err.push("Prénom manquant.");
+  if(!v("pNaiss"))err.push("Date de naissance manquante.");
+  if(!v("pNat"))err.push("Nationalité manquante.");
+  if(!v("pCie"))err.push("Compagnie manquante.");
+  if(!v("pMat"))err.push("Matricule manquant.");
+  if(!setupCat)err.push("Choisis ta catégorie de licence (B1 ou B2).");
+  if(!v("pDebut"))err.push("Date de début d'expérience manquante.");
+  const inter=[[v("i1d"),v("i1f")],[v("i2d"),v("i2f")]];
+  inter.forEach((p,i)=>{if((p[0]||p[1])&&!(p[0]&&p[1]))err.push("Interruption "+(i+1)+" : indique le début et la fin.");else if(p[0]&&p[1]&&p[1]<p[0])err.push("Interruption "+(i+1)+" : la fin est avant le début.");});
+  if((inter[0][0]||inter[1][0])&&!v("pMotif"))err.push("Indique le motif de l'interruption.");
+  if(!pdfTmp&&!(await store.get("pdf-1")))err.push("Ajoute le PDF de ton livret.");
+  const dp=pdfTmp?pdfTmp.dernPage:(etat?dern(etat.livrets[0]):L.DERNIERE_PAGE), cap1=(dp-L.PREMIERE_PAGE+1)*L.LIGNES;
+  const base=Math.max(0,parseInt($("sBase").value,10)||0);
+  if(setupEtat==="commence"){if(!base)err.push("Indique le dernier jour déjà inscrit dans ton livret.");if(!v("sDate"))err.push("Indique la date de la dernière tâche déjà inscrite.");}
+  const page=setupEtat==="commence"?parseInt($("sPage").value,10):L.PREMIERE_PAGE, ligne=setupEtat==="commence"?parseInt($("sLigne").value,10):1;
+  if(page>dp)err.push("La page "+page+" n'existe pas dans ce PDF (dernière page de tâches : "+dp+").");
+  if(etat){const n1=tachesDe(1).length;if((page-L.PREMIERE_PAGE)*L.LIGNES+ligne-1+n1>cap1)err.push("Avec cette case de départ, les "+n1+" tâches déjà saisies ne tiennent plus dans le livret n°1.");}
+  if(err.length){$("setupErrL").innerHTML="";err.forEach(m=>{const li=document.createElement("li");li.textContent=m;$("setupErrL").append(li);});$("setupErr").hidden=false;$("setupErr").scrollIntoView({behavior:"smooth",block:"center"});return;}
+  $("setupErr").hidden=true;
+  const profil={nom:v("pNom"),prenom:v("pPrenom"),naissance:v("pNaiss"),nationalite:v("pNat"),compagnie:v("pCie"),matricule:v("pMat").toUpperCase(),categorie:setupCat,debut:v("pDebut"),
+    interruptions:inter.filter(p=>p[0]&&p[1]).map(p=>({debut:p[0],fin:p[1]})),motif:v("pMotif")};
+  const reglages={base:setupEtat==="commence"?base:0,derniereDate:setupEtat==="commence"?v("sDate"):"",objectif:parseInt($("sObj").value,10)||420,limite:v("sLim")};
+  const l1={n:1,page,ligne,vierge:setupEtat==="vierge",ecrireIdentite:setupEtat==="vierge"?true:!$("sIdent").checked,dernPage:dp,dx:parseFloat($("sDx").value)||0,dy:parseFloat($("sDy").value)||0};
+  if(first)etat={version:1,profil,reglages,livrets:[l1],taches:[]};
+  else{etat.profil=profil;etat.reglages=reglages;etat.livrets[0]=l1;}
+  if(pdfTmp){await store.set("pdf-1",pdfTmp);pdfTmp=null;}
+  await save();
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(_){}
+  $("setup").hidden=true;$("app").hidden=false;resetForm(false);render();
+  toast("toastL",first?"Livret créé. Tu peux saisir ta première tâche.":"Réglages enregistrés.");
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+/* ---------- formulaire de tâche + contrôles OSAC ---------- */
+function suggestDay(){if(editId)return;const {j,d}=lastKnown();const dt=$("date").value;$("jour").value=(d&&dt===d)?j:j+1;}
+function setChips(arr){natures=new Set(arr||[]);document.querySelectorAll("#natChips .chip").forEach(b=>b.setAttribute("aria-pressed",natures.has(b.dataset.n)?"true":"false"));}
+document.querySelectorAll("#natChips .chip").forEach(b=>b.addEventListener("click",()=>{const n=b.dataset.n;natures.has(n)?natures.delete(n):natures.add(n);setChips([...natures]);changed();}));
+let typeTouched=false,ataTouched=false,touche=false;
+function changed(){touche=true;$("confirme").checked=false;check();}
+$("immat").addEventListener("input",e=>{let v=e.target.value.toUpperCase().replace(/\s/g,"");if(/^F[A-Z]/.test(v))v="F-"+v.slice(1);e.target.value=v;const t=typeFor(v);if(t&&!typeTouched)$("type").value=t;changed();});
+$("type").addEventListener("input",()=>{typeTouched=true;changed();});
+$("ref").addEventListener("input",e=>{const a=ataFromRef(e.target.value);if(a&&!ataTouched)$("ata").value=a;changed();});
+$("ata").addEventListener("input",()=>{ataTouched=true;changed();});
+$("date").addEventListener("change",()=>{suggestDay();changed();});
+["jour","trfx","titre"].forEach(id=>$(id).addEventListener("input",changed));
+$("confirme").addEventListener("change",()=>check());
+
+function readForm(){const a=$("ata").value.trim();return{date:$("date").value,jour:parseInt($("jour").value,10)||0,immat:$("immat").value.trim().toUpperCase(),type:$("type").value.trim().toUpperCase(),trfx:$("trfx").value.trim().toUpperCase(),ata:a?a.padStart(2,"0"):"",ref:$("ref").value.trim().toUpperCase().replace(/^TASK REF\s*:\s*/i,""),titre:$("titre").value.trim(),natures:[...natures]};}
+
+/* Renvoie {bloquants:[], aVerifier:[]} — bloquants = non conforme au règlement, aVerifier = à confirmer par le mécanicien. */
+function controle(f){
+  const B=[],V=[];const {j,d}=lastKnown();
+  const noms={date:"la date",jour:"le numéro de jour",immat:"l'immatriculation",type:"le type avion",trfx:"le n° TRFX",ata:"le chapitre ATA",ref:"la référence documentaire",titre:"le titre de la tâche"};
+  const miss=Object.keys(noms).filter(k=>!f[k]);
+  if(miss.length)B.push("Mentions obligatoires manquantes : "+miss.map(k=>noms[k]).join(", ")+".");
+  if(!f.natures.length)B.push("Nature de la tâche non cochée (INS, FOT, SGH, R/I ou TS).");
+  if(f.date&&f.date>today())B.push("Date dans le futur : une tâche ne s'inscrit qu'une fois réalisée.");
+  if(!editId){
+    if(d&&f.date&&f.date<d)B.push("Rupture de chronologie : la date est antérieure à ta dernière tâche ("+fr(d)+"). Le livret se remplit dans l'ordre, sans retour en arrière.");
+    else if(f.jour&&f.date){
+      if(d&&f.date===d&&f.jour!==j)B.push("Même date que la dernière tâche : le numéro de jour doit rester "+j+".");
+      else if((!d||f.date>d)&&f.jour!==j+1)B.push("Nouvelle journée : le numéro de jour doit être "+(j+1)+" (numérotation continue, sans saut).");
+    }
+    const lc=courant();if(libres(lc)<=0)B.push("Ton livret n°"+lc.n+" est plein ("+cap(lc)+" lignes). Télécharge-le puis ouvre un nouveau livret.");
+  }else{
+    const autres=etat.taches.filter(t=>t.id!==editId);
+    if(f.jour&&f.date){
+      if(autres.some(t=>t.jour===f.jour&&t.date!==f.date))B.push("Le jour "+f.jour+" correspond déjà à une autre date dans ton livret.");
+      if(autres.some(t=>t.date===f.date&&t.jour!==f.jour))B.push("Cette date porte déjà un autre numéro de jour dans ton livret.");
+      if(autres.some(t=>(t.jour<f.jour&&t.date>f.date)||(t.jour>f.jour&&t.date<f.date)))B.push("Rupture de chronologie : ce jour et cette date ne suivent plus l'ordre des autres tâches.");
+    }
+  }
+  if(f.ata&&!/^\d\d$/.test(f.ata))B.push("ATA invalide : indique le chapitre sur 2 chiffres (ex. 34).");
+  if(f.trfx&&!/^TRFX[0-9A-Z]{8}$/.test(f.trfx))B.push("N° TRFX invalide : « TRFX » suivi de 8 caractères attendu.");
+  if(f.titre&&(VAGUE.test(f.titre)||SEUL.test(f.titre)||f.titre.split(/\s+/).length<4))B.push("Titre vague ou générique : l'OSAC refuse ces mentions. Reprends le libellé de la documentation et nomme l'équipement ou le système.");
+  if(f.ref&&f.immat&&f.date&&etat.taches.some(x=>x.id!==editId&&x.ref===f.ref&&x.immat===f.immat&&x.date===f.date))B.push("Doublon : cette tâche est déjà dans ton livret (même référence, même avion, même date).");
+  if(f.immat&&!/^[A-Z0-9]{1,2}-[A-Z0-9]{3,5}$/.test(f.immat))B.push("Immatriculation invalide (format F-XXXX attendu).");
+  else if(f.immat&&!/^F-[A-Z]{4}$/.test(f.immat))V.push("Immatriculation étrangère ("+f.immat+") : vérifie qu'elle est exacte.");
+  const t=typeFor(f.immat);if(t&&f.type&&t!==f.type)V.push("Pour "+f.immat+", le type habituel est "+t+" et non "+f.type+".");
+  const a=ataFromRef(f.ref);if(a&&f.ata&&/^\d\d$/.test(f.ata)&&a!==f.ata)V.push("L'ATA ("+f.ata+") ne correspond pas au chapitre de la référence ("+a+"). Normal uniquement pour une tâche de servicing (chapitre 12).");
+  if(f.natures.length>1)V.push("Deux natures cochées ("+f.natures.join(" + ")+") : une tâche n'a en principe qu'une nature.");
+  return{bloquants:B,aVerifier:V};
+}
+function liste(ul,arr){ul.innerHTML="";arr.forEach(m=>{const li=document.createElement("li");li.textContent=m;ul.append(li);});}
+function check(force){
+  const c=controle(readForm());
+  const voir=touche||force||!!editId;
+  $("alerte").hidden=!(voir&&c.bloquants.length);liste($("alerteL"),c.bloquants);
+  $("verif").hidden=!(voir&&c.aVerifier.length);liste($("verifL"),c.aVerifier);
+  c.ok=!c.bloquants.length&&(!c.aVerifier.length||$("confirme").checked);
+  $("save").disabled=voir&&!c.ok;
+  return c;
+}
+function resetForm(keepAc){
+  const keep=keepAc?{date:$("date").value,immat:$("immat").value,type:$("type").value,trfx:$("trfx").value}:null;
+  $("f").reset();setChips([]);typeTouched=false;ataTouched=false;touche=false;editId=null;$("cancelEdit").hidden=true;$("save").textContent="Enregistrer la tâche";$("h-form").textContent="Nouvelle tâche";
+  if(keep){for(const k in keep)$(k).value=keep[k];typeTouched=!!keep.type;}else $("date").value=today();
+  suggestDay();check();
+}
+$("cancelEdit").addEventListener("click",()=>resetForm(false));
+$("sameAc").addEventListener("click",()=>{resetForm(true);$("ref").focus();});
+
+$("f").addEventListener("submit",async e=>{
+  e.preventDefault();const c=check(true);
+  if(!c.ok){(c.bloquants.length?$("alerte"):$("verif")).scrollIntoView({behavior:"smooth",block:"center"});return;}
+  const f=readForm();
+  if(editId){const t=etat.taches.find(x=>x.id===editId);Object.assign(t,f);toast("toast","Tâche modifiée.");}
+  else{etat.taches.push({...f,id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),livret:courant().n,creeLe:new Date().toISOString()});toast("toast","Tâche conforme enregistrée. Jour "+f.jour+" — "+f.immat+".");}
+  await save();resetForm(true);render();
+});
+
+/* ---------- liste ---------- */
+function card(t){
+  const c=document.createElement("div");c.className="card";
+  const top=document.createElement("div");top.className="top";
+  const l=document.createElement("span");l.textContent="Jour "+t.jour+" · "+fr(t.date)+" · ATA "+t.ata;
+  const r=document.createElement("span");r.textContent=t.immat+" · "+t.type+" · "+(t.natures||[]).join(" + ");
+  top.append(l,r);
+  const ti=document.createElement("div");ti.className="t";ti.textContent=t.titre;
+  const rf=document.createElement("div");rf.className="ref";rf.textContent="Task Ref : "+t.ref+" · "+t.trfx+" · "+(t.deja?"déjà écrite dans ton PDF (historique)":"livret n°"+t.livret+", page "+t.page+", ligne "+t.ligne);
+  if(t.deja){c.append(top,ti,rf);return c;}
+  const b=document.createElement("div");b.className="btns";
+  const ed=document.createElement("button");ed.type="button";ed.textContent="Modifier";
+  ed.onclick=()=>{editId=t.id;$("date").value=t.date;$("jour").value=t.jour;$("immat").value=t.immat;$("type").value=t.type;$("trfx").value=t.trfx;$("ata").value=t.ata;$("ref").value=t.ref;$("titre").value=t.titre;setChips(t.natures);typeTouched=ataTouched=true;$("confirme").checked=true;$("cancelEdit").hidden=false;$("save").textContent="Enregistrer la modification";$("h-form").textContent="Modifier la tâche";check();$("f").scrollIntoView({behavior:"smooth"});};
+  const del=document.createElement("button");del.type="button";del.className="del";del.textContent="Supprimer";
+  del.onclick=async()=>{if(del.dataset.armed){etat.taches=etat.taches.filter(x=>x.id!==t.id);if(editId===t.id)resetForm(false);await save();render();toast("toast","Tâche supprimée.");}else{del.dataset.armed="1";del.textContent="Confirmer la suppression";setTimeout(()=>{delete del.dataset.armed;del.textContent="Supprimer";},4000);}};
+  b.append(ed,del);c.append(top,ti,rf,b);
+  return c;
+}
+$("plus").addEventListener("click",()=>{montre+=60;render();});
+function render(){
+  if(!etat)return;
+  let all=etat.taches.filter(t=>t.deja).sort(sorter);etat.livrets.forEach(l=>{all=all.concat(lignesDe(l));});all.reverse();
+  $("qcount").textContent=all.length;
+  const q=$("queue");q.innerHTML="";
+  if(!all.length){const p=document.createElement("p");p.className="empty";p.textContent="Aucune tâche pour l'instant. Chaque tâche enregistrée est placée automatiquement dans la prochaine ligne libre de ton livret.";q.append(p);}
+  else all.slice(0,montre).forEach(t=>q.append(card(t)));
+  $("plus").hidden=all.length<=montre;
+  const cnt={};etat.taches.forEach(t=>{cnt[t.ata]=(cnt[t.ata]||0)+1;});
+  const cov=$("ata-cov");cov.innerHTML="";const keys=Object.keys(cnt).sort();
+  if(!keys.length){const s=document.createElement("span");s.textContent="—";cov.append(s);}
+  keys.forEach(k=>{const s=document.createElement("span");s.textContent=k+" · "+cnt[k];if(cnt[k]===1)s.className="few";cov.append(s);});
+  // livrets
+  const lc=courant(),lib=libres(lc);
+  $("s-lib").textContent=lib;$("s-lib-l").textContent="lignes libres dans le livret n°"+lc.n;
+  $("livInfo").textContent=etat.profil.prenom+" "+etat.profil.nom.toUpperCase()+" · licence "+etat.profil.categorie+" · livret n°"+lc.n+" : "+tachesDe(lc.n).length+" tâche(s) saisie(s) dans l'appli, prochaine case libre "+(lib>0?"page "+(L.PREMIERE_PAGE+Math.floor((cap(lc)-lib)/L.LIGNES))+", ligne "+((cap(lc)-lib)%L.LIGNES+1):"aucune (livret plein)")+".";
+  const sel=$("livSel");sel.hidden=etat.livrets.length<2;const cur=sel.value;sel.innerHTML="";etat.livrets.forEach(l=>sel.add(new Option("Livret n°"+l.n,l.n)));sel.value=cur&&etat.livrets.some(l=>String(l.n)===cur)?cur:String(lc.n);
+  $("newLiv").hidden=lib>10;
+  $("nReuse").hidden=!etat.livrets[0].vierge;
+  stats();suggestDay();check();
+}
+function stats(){
+  const {j}=lastKnown();const obj=etat.reglages.objectif||420;
+  $("s-days").textContent=j;
+  const rest=Math.max(0,obj-j);$("s-rest").textContent=rest;$("s-rest-l").textContent="restants pour "+obj+" jours";
+  $("b-obj").style.width=Math.min(100,j/obj*100)+"%";
+  const since=new Date();since.setDate(since.getDate()-90);const iso=since.toISOString().slice(0,10);
+  const recent=new Set(etat.taches.filter(t=>t.date>=iso).map(t=>t.jour));
+  const lim=etat.reglages.limite?new Date(etat.reglages.limite+"T12:00:00"):null;
+  const e=$("e-obj");
+  if(rest===0){e.className="state s-ok";e.textContent="objectif atteint";}
+  else if(recent.size>=20){const pace=recent.size/3;$("s-pace").textContent=pace.toFixed(1).replace(".",",");const d=new Date();d.setDate(d.getDate()+Math.round(rest/pace*30.44));const ok=!lim||d<lim;e.className="state "+(ok?"s-ok":"s-bad");e.textContent="≈ "+d.toLocaleDateString("fr-FR",{month:"long",year:"numeric"})+(ok?"":" · après l'échéance");}
+  else{$("s-pace").textContent=recent.size?String(recent.size):"—";e.className="state";e.textContent="estimation après 20 jours saisis";}
+  if(lim){const days=Math.ceil((lim-new Date())/864e5);const m=Math.floor(days/30.44);$("s-lim").textContent=days>0?(m>=1?m+" mois":days+" j"):"dépassée";$("s-lim-l").textContent="avant l'échéance du "+fr(etat.reglages.limite);}
+  else{$("s-lim").textContent="—";$("s-lim-l").textContent="aucune échéance réglée";}
+}
+
+/* ---------- remise d'un fichier (PDF, CSV, sauvegarde) ---------- */
+let dlCap=null;(async()=>{try{dlCap=window.claude&&window.claude.use?await window.claude.use("downloads"):null;}catch(_){dlCap=null;}})();
+const tactile=()=>/iPad|iPhone|iPod|Android/.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.userAgent));
+function partageable(blob,nom){try{const f=new File([blob],nom,{type:blob.type});return navigator.canShare&&navigator.canShare({files:[f]})?f:null;}catch(_){return null;}}
+async function remettre(blob,nom,toastId){
+  if(dlCap){try{await dlCap.save({filename:nom,data:blob});return true;}catch(e){if(e&&(e.code==="declined"||e.code==="cancelled"))return false;}}
+  if(!tactile()||!partageable(blob,nom)){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=nom;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);return true;}
+  return "partage";
+}
+async function partager(blob,nom){const f=partageable(blob,nom);if(!f)return;try{await navigator.share({files:[f]});}catch(_){}}
+
+/* ---------- génération du PDF ---------- */
+$("genPdf").addEventListener("click",async()=>{
+  const n=parseInt($("livSel").value,10)||courant().n,l=etat.livrets.find(x=>x.n===n);
+  const btn=$("genPdf");btn.disabled=true;btn.textContent="Préparation du livret…";
+  try{
+    const octets=await store.get("pdf-"+n);
+    if(!octets){toast("toastL","PDF du livret introuvable sur cet appareil : rajoute-le dans Réglages.",true);return;}
+    const out=await L.remplirLivret(PDFLib,octets.slice(0),{profil:etat.profil,ecrireIdentite:l.ecrireIdentite,nbLivrets:etat.livrets.length,lignes:lignesDe(l),dx:l.dx,dy:l.dy});
+    const nom="Livret-Part66-"+etat.profil.nom.toUpperCase().replace(/[^A-Z0-9]+/g,"-")+(etat.livrets.length>1?"-n"+n:"")+"-"+today()+".pdf";
+    const blob=new Blob([out],{type:"application/pdf"});
+    if(dernierPdf)URL.revokeObjectURL(dernierPdf.url);
+    dernierPdf={blob,nom,url:URL.createObjectURL(blob)};
+    const lien=$("pdfLien");lien.href=dernierPdf.url;lien.download=nom;lien.target="_blank";lien.hidden=!!dlCap;
+    $("pdfPartage").hidden=!(tactile()&&partageable(blob,nom))||!!dlCap;
+    const r=await remettre(blob,nom);
+    toast("toastL",r==="partage"?"Livret prêt : touche « Partager / Enregistrer dans Fichiers ».":r?"Livret prêt ("+lignesDe(l).length+" tâche(s) écrites).":"Téléchargement annulé.",!r);
+  }catch(e){toast("toastL","Impossible de remplir ce PDF. Vérifie dans Réglages que c'est bien ton livret.",true);}
+  finally{btn.disabled=false;btn.textContent="Télécharger mon livret rempli";}
+});
+$("pdfPartage").addEventListener("click",()=>{if(dernierPdf)partager(dernierPdf.blob,dernierPdf.nom);});
+
+/* ---------- nouveau livret ---------- */
+let nTmp=null;
+$("newLiv").addEventListener("click",()=>{$("newLivBloc").hidden=false;nTmp=null;$("nPdf").value="";});
+$("nCancel").addEventListener("click",()=>{$("newLivBloc").hidden=true;});
+$("nPdf").addEventListener("change",async e=>{const p=document.createElement("p");nTmp=await lirePdf(e.target.files[0],p);toast("toastL",p.textContent,!nTmp);});
+async function creerLivret(octets,dernPage){const n=courant().n+1;await store.set("pdf-"+n,octets);etat.livrets.push({n,page:L.PREMIERE_PAGE,ligne:1,vierge:true,ecrireIdentite:true,dernPage:dernPage||L.DERNIERE_PAGE});await save();$("newLivBloc").hidden=true;render();toast("toastL","Livret n°"+n+" ouvert. Les prochaines tâches y seront inscrites.");}
+$("nOk").addEventListener("click",()=>{if(!nTmp){toast("toastL","Ajoute d'abord le PDF vierge du livret.",true);return;}creerLivret(nTmp,nTmp.dernPage);});
+$("nReuse").addEventListener("click",async()=>{const o=await store.get("pdf-1");if(o)creerLivret(o.slice(0),dern(etat.livrets[0]));else toast("toastL","PDF de départ introuvable : ajoute un PDF vierge.",true);});
+
+/* ---------- exports et sauvegarde ---------- */
+const csvCell=v=>{const s=String(v==null?"":v);return /[";\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;};
+async function sortie(blob,nom){const r=await remettre(blob,nom);if(r==="partage")await partager(blob,nom);return r;}
+$("csv").addEventListener("click",async()=>{
+  const rows=[...etat.taches].sort(sorter);if(!rows.length){toast("toastB","Aucune tâche à exporter.",true);return;}
+  const head=["Jour","Date","ATA","INS","FOT","SGH","R/I","TS","Task Ref","Titre","Type avion","Immatriculation","TRFX","Livret"];
+  const lines=[head.join(";")].concat(rows.map(t=>[t.jour,fr(t.date),t.ata,...["INS","FOT","SGH","R/I","TS"].map(n=>(t.natures||[]).includes(n)?"X":""),t.ref,t.titre,t.type,t.immat,t.trfx,t.livret].map(csvCell).join(";")));
+  await sortie(new Blob(["﻿"+lines.join("\r\n")],{type:"text/csv"}),"livret-part66-"+today()+".csv");
+});
+$("bkOut").addEventListener("click",async()=>{await sortie(new Blob([JSON.stringify({type:"livret-part66",...etat},null,1)],{type:"application/json"}),"sauvegarde-livret-part66-"+today()+".json");toast("toastB","Sauvegarde exportée (sans le PDF : garde aussi ton fichier de livret).");});
+async function restaurer(e,toastId){
+  const file=e.target.files[0];e.target.value="";if(!file)return;
+  try{const d=JSON.parse(await file.text());if(d.type!=="livret-part66"||!Array.isArray(d.taches)||!Array.isArray(d.livrets)||!d.livrets.length||!d.profil||!d.reglages)throw 0;
+    delete d.type;etat=d;await save();$("app").hidden=false;$("setup").hidden=true;resetForm(false);render();
+    if(await store.get("pdf-1"))toast("toastB","Sauvegarde restaurée : "+etat.taches.length+" tâche(s).");
+    else{showSetup(false);$("sCancel").hidden=true;$("pdfLabel").firstChild.textContent="Ajoute le PDF de ton livret ";$("pdfEtat").textContent="Sauvegarde restaurée ("+etat.taches.length+" tâche(s)). Complète ton identité si besoin, ajoute le PDF de ton livret, puis enregistre.";$("pdfEtat").className="note okc";}
+  }catch(_){toast(toastId,"Ce fichier n'est pas une sauvegarde de l'appli.",true);}
+}
+$("bkIn").addEventListener("change",e=>restaurer(e,"toastB"));
+$("bkIn0").addEventListener("change",e=>restaurer(e,"toastR"));
+
+/* ---------- démarrage ---------- */
+(async()=>{
+  await store.open();
+  etat=(await store.get("etat"))||null;
+  $("sync").textContent=store.ok?"Enregistré sur cet appareil":"Stockage indisponible ici";
+  if(!store.ok)$("sync").className="sync bad";
+  if(etat){$("app").hidden=false;$("date").value=today();resetForm(false);render();if(!(await store.get("pdf-1"))){showSetup(false);$("sCancel").hidden=true;$("pdfEtat").textContent="Le PDF de ton livret n'est pas enregistré sur cet appareil : ajoute-le.";$("pdfEtat").className="note bad";}}
+  else showSetup(true);
+  if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)){try{navigator.serviceWorker.register("sw.js").catch(()=>{});}catch(_){}}
+})();
+})();
+</script>
+</body>
+</html>
